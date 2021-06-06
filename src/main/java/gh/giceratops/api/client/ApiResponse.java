@@ -16,6 +16,10 @@ public class ApiResponse<O> {
         this.httpResponse = httpResponse;
     }
 
+    public HttpResponse<O> http() {
+        return this.httpResponse;
+    }
+
     public ApiRequest<?, O> request() {
         return this.request;
     }

@@ -3,6 +3,7 @@ package gh.giceratops.api.client;
 import gh.giceratops.jutil.Reflect;
 
 import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.net.CookieStore;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -36,6 +37,7 @@ public class ApiClient extends ApiConfigurable<ApiClient> {
     private ApiClient(final ApiRoutes routes) {
         super();
         final var cookieManager = new CookieManager();
+        cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
         this.routes = routes;
         this.cookies = cookieManager.getCookieStore();
         this.http = HttpClient.newBuilder()
