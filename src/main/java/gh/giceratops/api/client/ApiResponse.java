@@ -6,22 +6,12 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ApiResponse<O> {
-
-    private final ApiRequest<?, O> request;
-    private final HttpResponse<O> httpResponse;
-
-    public ApiResponse(final ApiRequest<?, O> request, final HttpResponse<O> httpResponse) {
-        this.request = request;
-        this.httpResponse = httpResponse;
-    }
+@SuppressWarnings("unused")
+public record ApiResponse<O>(ApiRequest<?, O> request,
+                             HttpResponse<O> httpResponse) {
 
     public HttpResponse<O> http() {
         return this.httpResponse;
-    }
-
-    public ApiRequest<?, O> request() {
-        return this.request;
     }
 
     public URI uri() {

@@ -33,19 +33,6 @@ public class ApiConfigurable<I extends ApiConfigurable<I>> implements Function<S
         }
     }
 
-    protected String[] headers() {
-        if (this.headerParams == null) {
-            return null;
-        }
-
-        return this.headerParams.entrySet().stream()
-                .collect(LinkedList<String>::new, (list, entry) -> {
-                    list.add(entry.getKey());
-                    list.add(entry.getValue());
-                }, LinkedList::addAll)
-                .toArray(new String[0]);
-    }
-
     private Map<String, String> headerParams() {
         if (this.headerParams == null) {
             this.headerParams = new HashMap<>();
@@ -65,6 +52,19 @@ public class ApiConfigurable<I extends ApiConfigurable<I>> implements Function<S
             this.urlParams = new HashMap<>();
         }
         return this.urlParams;
+    }
+
+    protected String[] headers() {
+        if (this.headerParams == null) {
+            return null;
+        }
+
+        return this.headerParams.entrySet().stream()
+                .collect(LinkedList<String>::new, (list, entry) -> {
+                    list.add(entry.getKey());
+                    list.add(entry.getValue());
+                }, LinkedList::addAll)
+                .toArray(new String[0]);
     }
 
     public I reqHeader(final String header, final Object value) {

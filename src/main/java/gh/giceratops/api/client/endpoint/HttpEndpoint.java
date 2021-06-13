@@ -8,6 +8,7 @@ public class HttpEndpoint {
 
     protected final String url;
     protected Duration cacheTime;
+    protected Object staticResponse;
 
     public HttpEndpoint(final String url) {
         this.url = url;
@@ -28,6 +29,15 @@ public class HttpEndpoint {
 
     public Duration cache() {
         return this.cacheTime;
+    }
+
+    public HttpEndpoint staticResponse(final Object staticResponse) {
+        this.staticResponse = staticResponse;
+        return this;
+    }
+
+    public Object staticResponse() {
+        return this.staticResponse;
     }
 
     public String url(final ApiConfigurable<?> configurable) {

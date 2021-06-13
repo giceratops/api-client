@@ -4,13 +4,17 @@ import gh.giceratops.api.client.handler.JsonBodyHandler;
 import gh.giceratops.jutil.Pair;
 import gh.giceratops.api.client.endpoint.HttpEndpoint;
 
+import javax.net.ssl.SSLSession;
 import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("unused")
@@ -62,7 +66,7 @@ public class ApiRequest<I, O> extends ApiConfigurable<ApiRequest<I, O>> {
         try {
             publisher = this.in == null ?
                     HttpRequest.BodyPublishers.noBody() :
-                    HttpRequest.BodyPublishers.ofString(this.method.mapper().writeValueAsString(this.in));
+                    HttpRequest.BodyPublishers.ofString(this.method.json().asString(this.in));
         } catch (final Exception e) {
             publisher = HttpRequest.BodyPublishers.noBody();
         }
@@ -107,6 +111,54 @@ public class ApiRequest<I, O> extends ApiConfigurable<ApiRequest<I, O>> {
     }
 
     private CompletableFuture<ApiResponse<O>> fromCache(final HttpEndpoint endpoint, final HttpRequest req) {
+        final var staticResponse = endpoint.staticResponse();
+        if (staticResponse != null) {
+            final var future = new CompletableFuture<ApiResponse<O>>();
+            final var resp = new ApiResponse<>(this, new HttpResponse<>() {
+                @Override
+                public int statusCode() {
+                    return 200;
+                }
+
+                @Override
+                public HttpRequest request() {
+                    return null;
+                }
+
+                @Override
+                public Optional<HttpResponse<O>> previousResponse() {
+                    return Optional.empty();
+                }
+
+                @Override
+                public HttpHeaders headers() {
+                    return null;
+                }
+
+                @Override
+                public O body() {
+                    return (O) staticResponse;
+                }
+
+                @Override
+                public Optional<SSLSession> sslSession() {
+                    return Optional.empty();
+                }
+
+                @Override
+                public URI uri() {
+                    return null;
+                }
+
+                @Override
+                public HttpClient.Version version() {
+                    return null;
+                }
+            });
+            future.complete(resp);
+            return future;
+        }
+
         var duration = endpoint.cache();
         if (this.cacheTime != null) {
             duration = this.cacheTime;

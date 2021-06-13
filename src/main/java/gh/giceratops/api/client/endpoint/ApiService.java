@@ -3,10 +3,7 @@ package gh.giceratops.api.client.endpoint;
 import java.util.Objects;
 
 @SuppressWarnings("unused")
-public class ApiService {
-
-    private final String baseUrl;
-    private final String service;
+public record ApiService(String baseUrl, String service) {
 
     public ApiService(final String baseUrl, final String service) {
         this.baseUrl = Objects.requireNonNull(baseUrl);
