@@ -7,7 +7,6 @@ import java.time.Duration;
 public class HttpEndpoint {
 
     protected final String url;
-    protected Duration cacheTime;
     protected Object staticResponse;
 
     public HttpEndpoint(final String url) {
@@ -20,15 +19,6 @@ public class HttpEndpoint {
 
     public ApiService service(final String service) {
         return new ApiService(this.url, service);
-    }
-
-    public HttpEndpoint cache(final Duration cacheTime) {
-        this.cacheTime = cacheTime;
-        return this;
-    }
-
-    public Duration cache() {
-        return this.cacheTime;
     }
 
     public HttpEndpoint staticResponse(final Object staticResponse) {

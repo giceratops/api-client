@@ -20,15 +20,12 @@ import java.util.concurrent.CompletableFuture;
 @SuppressWarnings("unused")
 public class ApiRequest<I, O> extends ApiConfigurable<ApiRequest<I, O>> {
 
-    private static final Map<HttpRequest, Pair<Instant, CompletableFuture<?>>> CACHE = new HashMap<>();
-
     private final ApiMethod method;
     private final ApiClient client;
     private final I in;
     private final Class<O> outClass;
 
     private long createdAt, finishedAt;
-    private Duration cacheTime;
     private HttpEndpoint overrideEndpoint;
 
     public ApiRequest(final ApiClient client, final ApiMethod method, final I in, final Class<O> outClass) {
@@ -54,11 +51,6 @@ public class ApiRequest<I, O> extends ApiConfigurable<ApiRequest<I, O>> {
         }
         return this.client.routes().endpoint(this.method, c)
                 .orElseThrow();
-    }
-
-    public ApiRequest<I, O> cache(final Duration duration) {
-        this.cacheTime = duration;
-        return this;
     }
 
     private HttpRequest createRequest(final HttpEndpoint endpoint) {
@@ -103,10 +95,6 @@ public class ApiRequest<I, O> extends ApiConfigurable<ApiRequest<I, O>> {
         if (this.client.listener() != null) {
             f = f.whenComplete(this.client.listener());
         }
-        if (this.cacheTime != null) {
-            CACHE.put(req, Pair.of(Instant.now(), f));
-        }
-
         return f;
     }
 
@@ -158,25 +146,6 @@ public class ApiRequest<I, O> extends ApiConfigurable<ApiRequest<I, O>> {
             future.complete(resp);
             return future;
         }
-
-        var duration = endpoint.cache();
-        if (this.cacheTime != null) {
-            duration = this.cacheTime;
-        }
-        if (duration == null) {
-            return null;
-        }
-
-        final var prevResponse = CACHE.get(req);
-        if (prevResponse == null) {
-            return null;
-        }
-
-        if (prevResponse.left().plus(duration).isAfter(Instant.now())) {
-            // noinspection unchecked
-            return (CompletableFuture<ApiResponse<O>>) prevResponse.right();
-        }
-
         return null;
     }
 
