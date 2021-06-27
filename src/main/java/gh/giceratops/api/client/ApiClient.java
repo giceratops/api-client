@@ -137,6 +137,11 @@ public class ApiClient extends ApiConfigurable<ApiClient> {
         return this.request(ApiMethod.PUT, o, (Class<O>) o.getClass());
     }
 
+    public <I, O> ApiRequest<O, O> PUT(final O o, final String id) {
+        return this.request(ApiMethod.PUT, o, (Class<O>) o.getClass())
+                .urlParam(id, Reflect.getField(o, id));
+    }
+
     public <I, O> ApiRequest<I, O> PUT(final I in, Class<O> outClass) {
         return this.request(ApiMethod.PUT, in, outClass);
     }
