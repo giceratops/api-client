@@ -8,8 +8,7 @@ import java.io.InputStreamReader;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 
-public record JsonBodyHandler<T>(ApiMethod method,
-                                 Class<T> tClass) implements HttpResponse.BodyHandler<T> {
+public record JsonBodyHandler<T>(ApiMethod method, Class<T> tClass) implements HttpResponse.BodyHandler<T> {
 
     @Override
     public HttpResponse.BodySubscriber<T> apply(final HttpResponse.ResponseInfo responseInfo) {
