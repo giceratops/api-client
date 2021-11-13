@@ -1,8 +1,8 @@
 package gh.giceratops.api.client;
 
 import gh.giceratops.api.client.handler.JsonBodyHandler;
-import gh.giceratops.jutil.Pair;
 import gh.giceratops.api.client.endpoint.HttpEndpoint;
+import gh.giceratops.jutil.Strings;
 
 import javax.net.ssl.SSLSession;
 import java.net.URI;
@@ -10,12 +10,9 @@ import java.net.http.HttpClient;
 import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public class ApiRequest<I, O> extends ApiConfigurable<ApiRequest<I, O>> {
@@ -54,18 +51,30 @@ public class ApiRequest<I, O> extends ApiConfigurable<ApiRequest<I, O>> {
     }
 
     private HttpRequest createRequest(final HttpEndpoint endpoint) {
+        final var builder = HttpRequest.newBuilder();
+        final var url = endpoint.url(this);
+
         HttpRequest.BodyPublisher publisher;
         try {
-            publisher = this.in == null ?
-                    HttpRequest.BodyPublishers.noBody() :
-                    HttpRequest.BodyPublishers.ofString(this.method.json().asString(this.in));
+            if (this.in == null) {
+                publisher = HttpRequest.BodyPublishers.noBody();
+            } else if (this.in instanceof ApiFormData) {
+                final var s = ((ApiFormData) this.in).formData().entrySet()
+                        .stream()
+                        .map(e -> String.format("%s=%s", Strings.urlEncode(e.getKey()), Strings.urlEncode(e.getValue())))
+                        .collect(Collectors.joining("&"));
+                builder.header("Content-Type", "application/x-www-form-urlencoded");
+                publisher = HttpRequest.BodyPublishers.ofString(s);
+            } else {
+                builder.header("Content-Type", "application/json");
+                publisher = HttpRequest.BodyPublishers.ofString(this.method.json().asString(this.in));
+            }
         } catch (final Exception e) {
             publisher = HttpRequest.BodyPublishers.noBody();
         }
 
-        final var uri = URI.create(endpoint.url(this));
-        final var builder = HttpRequest.newBuilder()
-                .method(this.method.name(), publisher)
+        final var uri = URI.create(url);
+        builder.method(this.method.name(), publisher)
                 .uri(uri)
                 .headers(super.headers());
 
