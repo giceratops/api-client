@@ -1,57 +1,47 @@
 package testing;
 
 import gh.giceratops.api.client.ApiClient;
-import gh.giceratops.api.client.endpoint.HttpEndpoint;
+import gh.giceratops.api.client.ApiEndpoint;
+import gh.giceratops.jutil.Json;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class Main {
 
+    private static record UserInfo(String sub, boolean email_verified, String preferred_username) {
+
+        @Override
+        public String toString() {
+            return Json.stringify(this, true);
+        }
+    }
+
     public static void main(String[] args) throws Throwable {
-        final var apiClient = new ApiClient();
-        apiClient.onRequest(new KeycloakHandler("giceratops", "password"));
+        final var client = createClient(args[0], args[1]);
+        testKeycloak(client);
+    }
 
-        apiClient.routes()
-                .POST(KeycloakAuth.Req.class, new HttpEndpoint("https://sso.syrup.ms/auth/realms/{realm}/protocol/openid-connect/token"))
-                .GET(KeycloakAuth.UserInfo.class, new HttpEndpoint("https://sso.syrup.ms/auth/realms/{realm}/protocol/openid-connect/userinfo"));
-//
-//        apiClient.POST(new KeycloakAuth.Req("giceratops", "password"), KeycloakAuth.Resp.class)
-//                .urlParam("realm", "syrup")
-//                .sync()
-//                .thenAccept((apiResponse) -> {
-//                    System.out.println(apiResponse.body());
-//                    final var bearer = apiResponse.body().access_token;
-//                    apiClient.GET(KeycloakAuth.UserInfo.class)
-//                            .urlParam("realm", "syrup")
-//                            .reqHeader("Authorization", "Bearer " + bearer)
-//                            .sync()
-//                            .thenAccept((userInfoApiResponse) -> {
-//                                System.out.println(userInfoApiResponse.body());
-//                            });
-//                }).exceptionally((t) -> {
-//                    t.printStackTrace(System.err);
-//                    return null;
-//                });
+    private static ApiClient createClient(final String username, final String password) {
+        final var client = new ApiClient((routes) -> routes
+                .GET(UserInfo.class, new ApiEndpoint("https://sso.syrup.ms/auth/realms/{realm}/protocol/openid-connect/userinfo"))
+        );
+        final var keycloak = new Keycloak.Authenticator(client)
+                .login(username, password);
 
-        apiClient.GET(KeycloakAuth.UserInfo.class)
-                .urlParam("realm", "syrup")
-                .sync()
-                .thenAccept((userInfoApiResponse) -> {
-                    System.out.println(userInfoApiResponse.http().request().headers());
-                    System.out.println(userInfoApiResponse.statusCode());
-                    System.out.println(userInfoApiResponse.body());
-                });
-        apiClient.GET(KeycloakAuth.UserInfo.class)
-                .urlParam("realm", "syrup")
-                .sync()
-                .thenAccept((userInfoApiResponse) -> {
-                    System.out.println(userInfoApiResponse.http().request().headers());
-                    System.out.println(userInfoApiResponse.statusCode());
-                    System.out.println(userInfoApiResponse.body());
-                });
+        client.auth().register(keycloak);
+        return client;
+    }
 
-        apiClient.GET(String.class)
-                .override(new HttpEndpoint("https://whoami.syrup.ms"))
-                .sync().thenAccept((stringApiResponse) -> {
-                    System.out.println(stringApiResponse.body());
-                });
+    private static void testKeycloak(final ApiClient client) {
+        Executors.newScheduledThreadPool(5).scheduleAtFixedRate(() -> {
+            client.GET(UserInfo.class)
+                    .urlParam("realm", "syrup")
+                    .sync()
+                    .thenAccept((resp) -> {
+                        System.out.println(resp.http().request().headers());
+                        System.out.println(resp.statusCode() + " " + resp.body());
+                    });
+        }, 0, 120, TimeUnit.SECONDS);
     }
 }

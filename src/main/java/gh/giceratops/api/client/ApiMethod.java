@@ -1,6 +1,5 @@
 package gh.giceratops.api.client;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import gh.giceratops.jutil.Json;
 
 public enum ApiMethod {

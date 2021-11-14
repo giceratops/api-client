@@ -1,12 +1,11 @@
 package gh.giceratops.api.client;
 
+import gh.giceratops.api.client.auth.ApiAuthentication;
 import gh.giceratops.jutil.Reflect;
 
 import java.net.CookieManager;
 import java.net.CookiePolicy;
-import java.net.CookieStore;
 import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.Executor;
@@ -18,12 +17,10 @@ import java.util.function.Consumer;
 @SuppressWarnings({"unused", "unchecked"})
 public class ApiClient extends ApiConfigurable<ApiClient> {
 
-    private final ApiRoutes routes;
     private final HttpClient http;
-    private final CookieStore cookies;
-
-    private BiConsumer<ApiClient, HttpRequest> onRequest;
-    private BiConsumer<ApiResponse<?>, Throwable> listener;
+    private final ApiRoutes routes;
+    private final CookieManager cookieManager;
+    private final ApiAuthentication authentication;
 
     public ApiClient() {
         this(new ApiRoutes());
@@ -36,13 +33,12 @@ public class ApiClient extends ApiConfigurable<ApiClient> {
 
     private ApiClient(final ApiRoutes routes) {
         super();
-        final var cookieManager = new CookieManager();
-        cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
         this.routes = routes;
-        this.cookies = cookieManager.getCookieStore();
+        this.authentication = new ApiAuthentication();
+        this.cookieManager = new CookieManager(null, CookiePolicy.ACCEPT_ALL);
         this.http = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_1_1)
-                .cookieHandler(cookieManager)
+                .cookieHandler(this.cookieManager)
                 .connectTimeout(Duration.ofSeconds(5))
                 .followRedirects(HttpClient.Redirect.ALWAYS)
                 .executor(Executors.newScheduledThreadPool(2, runnable -> {
@@ -52,43 +48,27 @@ public class ApiClient extends ApiConfigurable<ApiClient> {
                 }))
                 .build();
 
-        this.onRequest = (client, uri) -> {
-        };
-
-        super.reqHeader("User-Agent", ApiProperties.USER_AGENT)
-                .reqHeader("Content-Type", "application/json");
+        super.reqHeader("User-Agent", ApiProperties.USER_AGENT);
     }
 
     public ApiClient copy() {
-        return this.copy(false);
+        return new ApiClient(this.routes);
     }
 
-    public ApiClient copy(boolean deep) {
-        final var ret = new ApiClient(this.routes);
-        if (deep) {
-            ret.onRequest(ret.onRequest);
-        }
-        return ret;
-    }
-
-    public void onRequest(final BiConsumer<ApiClient, HttpRequest> onRequest) {
-        this.onRequest = onRequest;
-    }
-
-    protected BiConsumer<ApiClient, HttpRequest> onRequest() {
-        return this.onRequest;
+    public ApiAuthentication auth() {
+        return this.authentication;
     }
 
     public HttpClient http() {
         return this.http;
     }
 
-    public CookieStore cookies() {
-        return this.cookies;
+    public CookieManager cookies() {
+        return this.cookieManager;
     }
 
-    BiConsumer<ApiResponse<?>, Throwable> listener() {
-        return this.listener;
+    public ApiRoutes routes() {
+        return this.routes;
     }
 
     public Optional<Executor> executor() {
@@ -99,17 +79,6 @@ public class ApiClient extends ApiConfigurable<ApiClient> {
         return this.executor()
                 .filter(e -> e instanceof ScheduledExecutorService)
                 .map(e -> (ScheduledExecutorService) e);
-    }
-
-    public ApiClient listener(final BiConsumer<ApiResponse<?>, Throwable> listener) {
-        this.listener = this.listener == null ?
-                listener : this.listener.andThen(listener);
-
-        return this;
-    }
-
-    public ApiRoutes routes() {
-        return this.routes;
     }
 
     private <I, O> ApiRequest<I, O> request(final ApiMethod method, final I in, final Class<O> outClass) {

@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import gh.giceratops.api.client.endpoint.HttpEndpoint;
 
 import java.util.NoSuchElementException;
 
@@ -17,14 +16,14 @@ class ApiRoutesTest {
     }
 
     private ApiRoutes router;
-    private HttpEndpoint endpoint;
+    private ApiEndpoint endpoint;
 
     private ApiRoutesTest() {
     }
 
     @BeforeEach
     void beforeEach() {
-        this.endpoint = new HttpEndpoint("");
+        this.endpoint = new ApiEndpoint("");
         this.router = new ApiRoutes()
                 .GET(ClassA.class, endpoint)
                 .POST(ClassA.class, endpoint)
