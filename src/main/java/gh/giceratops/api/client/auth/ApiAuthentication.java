@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public class ApiAuthentication {
 
@@ -20,7 +21,11 @@ public class ApiAuthentication {
     public Optional<ApiAuthenticator> find(final URI uri) {
         return this.authenticators
                 .stream()
-                .filter((authenticator) -> authenticator.test(uri))
+                .filter((authenticator) -> authenticator.accepts(uri))
                 .findFirst();
+    }
+
+    public void ifPresent(final URI uri, final Consumer<ApiAuthenticator> consumer) {
+        this.find(uri).ifPresent(consumer);
     }
 }

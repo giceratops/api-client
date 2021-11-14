@@ -25,10 +25,10 @@ class ApiRoutesTest {
     void beforeEach() {
         this.endpoint = new ApiEndpoint("");
         this.router = new ApiRoutes()
-                .GET(ClassA.class, endpoint)
-                .POST(ClassA.class, endpoint)
-                .PUT(ClassA.class, endpoint)
-                .DELETE(ClassA.class, endpoint);
+                .get(ClassA.class, endpoint)
+                .post(ClassA.class, endpoint)
+                .put(ClassA.class, endpoint)
+                .delete(ClassA.class, endpoint);
     }
 
     @Test

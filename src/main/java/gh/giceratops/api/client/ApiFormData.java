@@ -13,7 +13,7 @@ public interface ApiFormData {
         return this.formData()
                 .entrySet()
                 .stream()
-                .map(e -> String.format("%s=%s", Strings.urlEncode(e.getKey()), Strings.urlEncode(e.getValue())))
+                .map((e) -> String.format("%s=%s", Strings.urlEncode(e.getKey()), Strings.urlEncode(e.getValue())))
                 .collect(Collectors.joining("&"));
     }
 }

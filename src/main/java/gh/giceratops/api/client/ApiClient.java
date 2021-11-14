@@ -2,7 +2,9 @@ package gh.giceratops.api.client;
 
 import gh.giceratops.api.client.auth.ApiAuthentication;
 import gh.giceratops.jutil.Reflect;
+import gh.giceratops.jutil.concurrent.DaemonThreadFactory;
 
+import javax.ws.rs.core.HttpHeaders;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.http.HttpClient;
@@ -11,7 +13,6 @@ import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 @SuppressWarnings({"unused", "unchecked"})
@@ -37,18 +38,14 @@ public class ApiClient extends ApiConfigurable<ApiClient> {
         this.authentication = new ApiAuthentication();
         this.cookieManager = new CookieManager(null, CookiePolicy.ACCEPT_ALL);
         this.http = HttpClient.newBuilder()
-                .version(HttpClient.Version.HTTP_1_1)
+                .version(HttpClient.Version.HTTP_2)
                 .cookieHandler(this.cookieManager)
                 .connectTimeout(Duration.ofSeconds(5))
-                .followRedirects(HttpClient.Redirect.ALWAYS)
-                .executor(Executors.newScheduledThreadPool(2, runnable -> {
-                    final var thread = Executors.defaultThreadFactory().newThread(runnable);
-                    thread.setDaemon(true);
-                    return thread;
-                }))
+                .followRedirects(HttpClient.Redirect.NORMAL)
+                .executor(Executors.newScheduledThreadPool(2, new DaemonThreadFactory()))
                 .build();
 
-        super.reqHeader("User-Agent", ApiProperties.USER_AGENT);
+        super.reqHeader(HttpHeaders.USER_AGENT, ApiClient.class.getSimpleName());
     }
 
     public ApiClient copy() {
@@ -85,46 +82,46 @@ public class ApiClient extends ApiConfigurable<ApiClient> {
         return new ApiRequest<>(this, method, in, outClass);
     }
 
-    public <I, O> ApiRequest<I, O> GET(final Class<O> oClass) {
+    public <I, O> ApiRequest<I, O> get(final Class<O> oClass) {
         return this.request(ApiMethod.GET, null, oClass);
     }
 
-    public <I, O> ApiRequest<I, O> GET(final Class<O> oClass, final Object id) {
+    public <I, O> ApiRequest<?, O> get(final Class<O> oClass, final Object id) {
         return this.request(ApiMethod.GET, (I) null, oClass)
                 .urlParam("id", id);
     }
 
-    public <I, O> ApiRequest<O, O> POST(final O o) {
+    public <I, O> ApiRequest<O, O> post(final O o) {
         return this.request(ApiMethod.POST, o, (Class<O>) o.getClass());
     }
 
-    public <I, O> ApiRequest<I, O> POST(final I in, Class<O> outClass) {
+    public <I, O> ApiRequest<I, O> post(final I in, Class<O> outClass) {
         return this.request(ApiMethod.POST, in, outClass);
     }
 
-    public <I, O> ApiRequest<O, O> PUT(final O o) {
+    public <I, O> ApiRequest<O, O> put(final O o) {
         return this.request(ApiMethod.PUT, o, (Class<O>) o.getClass());
     }
 
-    public <I, O> ApiRequest<O, O> PUT(final O o, final String id) {
+    public <I, O> ApiRequest<O, O> put(final O o, final String id) {
         return this.request(ApiMethod.PUT, o, (Class<O>) o.getClass())
                 .urlParam(id, Reflect.getField(o, id));
     }
 
-    public <I, O> ApiRequest<I, O> PUT(final I in, Class<O> outClass) {
+    public <I, O> ApiRequest<I, O> put(final I in, Class<O> outClass) {
         return this.request(ApiMethod.PUT, in, outClass);
     }
 
-    public <I, O> ApiRequest<I, O> DELETE(final Class<O> oClass) {
+    public <I, O> ApiRequest<I, O> delete(final Class<O> oClass) {
         return this.request(ApiMethod.DELETE, null, oClass);
     }
 
-    public <I, O> ApiRequest<I, O> DELETE(final Class<O> oClass, final Object id) {
+    public <I, O> ApiRequest<I, O> delete(final Class<O> oClass, final Object id) {
         return this.request(ApiMethod.DELETE, (I) null, oClass)
                 .urlParam("id", id);
     }
 
-    public <I, O> ApiRequest<I, Void> DELETE(final I in, final String id) {
+    public <I, O> ApiRequest<I, Void> delete(final I in, final String id) {
         return this.request(ApiMethod.DELETE, in, Void.class)
                 .urlParam(id, Reflect.getField(in, id));
     }

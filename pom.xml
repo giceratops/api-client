@@ -6,7 +6,7 @@
 
     <groupId>gh.giceratops</groupId>
     <artifactId>api-client</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
 
     <properties>
         <java.version>16</java.version>
@@ -20,6 +20,7 @@
 
         <!-- versions -->
         <jutil.version>0.0.0-SNAPSHOT</jutil.version>
+        <ws.rs.version>2.1.1</ws.rs.version>
 
         <slf4j.version>1.7.32</slf4j.version>
         <junit.jupiter.version>5.8.1</junit.jupiter.version>
@@ -31,6 +32,12 @@
             <groupId>gh.giceratops</groupId>
             <artifactId>jutil</artifactId>
             <version>${jutil.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+            <version>${ws.rs.version}</version>
         </dependency>
 
         <!-- test: junit -->

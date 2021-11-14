@@ -2,6 +2,8 @@ package gh.giceratops.api.client;
 
 import gh.giceratops.api.client.handler.JsonBodyHandler;
 
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -14,16 +16,39 @@ public class ApiRequest<I, O> extends ApiConfigurable<ApiRequest<I, O>> {
     private final ApiClient client;
     private final I in;
     private final Class<O> outClass;
+    private final Class<?> lookupClass;
 
     private long createdAt, finishedAt;
     private ApiEndpoint overrideEndpoint;
 
     public ApiRequest(final ApiClient client, final ApiMethod method, final I in, final Class<O> outClass) {
+        this(client, method, in, outClass, outClass);
+    }
+
+    private ApiRequest(final ApiClient client, final ApiMethod method, final I in, final Class<O> outClass, Class<?> lookupClass) {
         super(client);
         this.client = client;
         this.method = method;
         this.in = in;
         this.outClass = outClass;
+        this.lookupClass = lookupClass;
+    }
+
+    public <C> ApiRequest<I, C> as(final Class<C> cClass) {
+        return new ApiRequest<>(this.client, this.method, this.in, cClass, this.lookupClass);
+    }
+
+    public ApiMethod method() {
+        return this.method;
+    }
+
+    public long ping() {
+        return this.finishedAt - this.createdAt;
+    }
+
+    public ApiRequest<I, O> at(final ApiEndpoint endpoint) {
+        this.overrideEndpoint = endpoint;
+        return this;
     }
 
     private ApiEndpoint createEndpoint() {
@@ -33,7 +58,7 @@ public class ApiRequest<I, O> extends ApiConfigurable<ApiRequest<I, O>> {
 
         final Class<?> aClass;
         if (this.in == null) {
-            aClass = this.outClass;
+            aClass = this.lookupClass;
         } else if (Class.class.equals(this.in.getClass())) {
             aClass = (Class<?>) this.in;
         } else {
@@ -52,37 +77,26 @@ public class ApiRequest<I, O> extends ApiConfigurable<ApiRequest<I, O>> {
         final String contentType;
         if (this.in == null) {
             publisher = HttpRequest.BodyPublishers.noBody();
-            contentType = "text/plain";
+            contentType = MediaType.TEXT_PLAIN;
         } else if (this.in instanceof ApiFormData) {
             publisher = HttpRequest.BodyPublishers.ofString(((ApiFormData) this.in).asString());
-            contentType = "application/x-www-form-urlencoded";
+            contentType = MediaType.APPLICATION_FORM_URLENCODED;
         } else {
             publisher = HttpRequest.BodyPublishers.ofString(this.method.json().asString(this.in));
-            contentType = "application/json";
+            contentType = MediaType.APPLICATION_JSON;
         }
 
         builder.method(this.method.name(), publisher)
-                .header("Content-Type", contentType)
+                .header(HttpHeaders.CONTENT_TYPE, contentType)
                 .uri(uri)
                 .headers(super.headers());
 
-        this.client.auth()
-                .find(uri)
-                .ifPresent((authenticator) ->
-                        authenticator.accept(uri, builder)
-                );
+        this.client.auth().ifPresent(uri, (authenticator) -> authenticator.handleRequest(uri, builder));
 
         this.createdAt = System.currentTimeMillis();
         return builder.build();
     }
 
-    public ApiMethod method() {
-        return this.method;
-    }
-
-    public long ping() {
-        return this.finishedAt - this.createdAt;
-    }
 
     private CompletableFuture<ApiResponse<O>> convert(final HttpRequest req, final CompletableFuture<HttpResponse<O>> future) {
         return future.thenApply((resp) -> {
@@ -109,18 +123,5 @@ public class ApiRequest<I, O> extends ApiConfigurable<ApiRequest<I, O>> {
             future.completeExceptionally(t);
         }
         return convert(req, future);
-    }
-
-    public ApiRequest<I, O> override(final ApiEndpoint endpoint) {
-        this.overrideEndpoint = endpoint;
-        return this;
-    }
-
-    public O get() throws Exception {
-        return this.sync().get().body();
-    }
-
-    public O get(final ApiEndpoint endpoint) throws Exception {
-        return this.override(endpoint).get();
     }
 }
