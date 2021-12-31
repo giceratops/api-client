@@ -21,7 +21,7 @@ public class ApiRoutes {
         return this;
     }
 
-    Optional<ApiEndpoint> endpoint(final ApiMethod method, final Class<?> clazz) {
+    public Optional<ApiEndpoint> endpoint(final ApiMethod method, final Class<?> clazz) {
         return this.routes.entrySet()
                 .stream()
                 .filter(e -> e.getKey().equals(method, clazz))

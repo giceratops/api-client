@@ -1,4 +1,4 @@
-package gh.giceratops.api.client.handler;
+package gh.giceratops.api.client.protocols.http.handler;
 
 import gh.giceratops.api.client.ApiMethod;
 import gh.giceratops.jutil.Exceptions;

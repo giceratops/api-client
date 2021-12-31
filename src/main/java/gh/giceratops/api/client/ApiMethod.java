@@ -4,10 +4,10 @@ import gh.giceratops.jutil.Json;
 
 public enum ApiMethod {
 
-    GET,
-    PUT,
-    POST,
-    DELETE;
+    GET,        // get
+    PUT,        // update
+    POST,       // create
+    DELETE;     // remove
 
     private final Json json;
 

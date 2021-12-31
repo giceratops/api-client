@@ -1,8 +1,10 @@
-package gh.giceratops.api.client;
+package gh.giceratops.api.client.protocols.http;
 
+import gh.giceratops.api.client.ApiClient;
 import gh.giceratops.jutil.Maps;
 import gh.giceratops.jutil.Strings;
 
+import javax.ws.rs.core.HttpHeaders;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -10,16 +12,16 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @SuppressWarnings({"unused", "unchecked"})
-public class ApiConfigurable<I extends ApiConfigurable<I>> implements Function<String, String> {
+public class HttpConfigurable<I extends HttpConfigurable<I>> implements Function<String, String> {
 
     private Map<String, String> headerParams;
     private Map<String, String> queryParams;
     private Map<String, String> urlParams;
 
-    protected ApiConfigurable() {
+    protected HttpConfigurable() {
     }
 
-    protected ApiConfigurable(final ApiConfigurable<?> configurable) {
+    protected HttpConfigurable(final HttpConfigurable<?> configurable) {
         if (configurable.headerParams != null) {
             this.headerParams().putAll(configurable.headerParams);
         }
@@ -56,7 +58,7 @@ public class ApiConfigurable<I extends ApiConfigurable<I>> implements Function<S
 
     protected String[] headers() {
         if (this.headerParams == null) {
-            return null;
+            return new String[]{HttpHeaders.USER_AGENT, ApiClient.class.getSimpleName()};
         }
 
         return this.headerParams.entrySet().stream()

@@ -1,11 +1,11 @@
-package gh.giceratops.api.client;
+package gh.giceratops.api.client.protocols.http;
 
 import gh.giceratops.jutil.Strings;
 
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public interface ApiFormData {
+public interface HttpFormData {
 
     Map<String, String> formData();
 
