@@ -12,7 +12,7 @@ public class FileRequest<I, O> implements ApiRequest<I, O> {
 
     private final ApiMethod method;
     private final ApiClient client;
-    private final HttpHandler handler;
+    private final FileHandler handler;
     private final I in;
     private final Class<O> outClass;
     private final Class<?> lookupClass;
@@ -20,11 +20,11 @@ public class FileRequest<I, O> implements ApiRequest<I, O> {
     private long createdAt, finishedAt;
     private ApiEndpoint overrideEndpoint;
 
-    public FileRequest(final ApiClient client, final HttpHandler handler, final ApiMethod method, final I in, final Class<O> outClass) {
+    public FileRequest(final ApiClient client, final FileHandler handler, final ApiMethod method, final I in, final Class<O> outClass) {
         this(client, handler, method, in, outClass, outClass);
     }
 
-    private FileRequest(final ApiClient client, final HttpHandler handler, final ApiMethod method, final I in, final Class<O> outClass, Class<?> lookupClass) {
+    private FileRequest(final ApiClient client, final FileHandler handler, final ApiMethod method, final I in, final Class<O> outClass, Class<?> lookupClass) {
         this.client = client;
         this.method = method;
         this.handler = handler;

@@ -2,18 +2,29 @@ package gh.giceratops.api.client.$;
 
 import gh.giceratops.api.client.ApiClient;
 import gh.giceratops.api.client.ApiEndpoint;
+import gh.giceratops.api.client.protocols.file.FileHandler;
 import gh.giceratops.api.client.protocols.http.HttpHandler;
 import gh.giceratops.api.client.protocols.http.HttpRequest;
+
+import java.net.URI;
 
 public class Main {
 
     public static void main(final String... args) throws Throwable {
         System.out.printf("Hello%n");
 
+
+        final var url1 = new URI("file://../test.txt");
+        System.out.printf("%s %s %s %n", url1.toURL().getProtocol(), url1.toURL().getFile(), url1.getAuthority());
+
+
+        final var fileHandler = new FileHandler();
         final var httpHandler = new HttpHandler();
         final var client = new ApiClient((routes) -> routes
-                .get(Object.class, new ApiEndpoint("http://whoami.syrup.ms"))
-        ).register("http", httpHandler)
+                .get(Object.class, new ApiEndpoint("https://whoami.syrup.ms"))
+        )
+                .register("file", fileHandler)
+                .register("http", httpHandler)
                 .register("https", httpHandler);
 
         final var req = client.get(Object.class);

@@ -3,9 +3,12 @@ package gh.giceratops.api.client;
 import gh.giceratops.api.client.auth.ApiAuthentication;
 import gh.giceratops.api.client.protocols.http.HttpConfigurable;
 import gh.giceratops.jutil.Reflect;
+import gh.giceratops.jutil.concurrent.DaemonThreadFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Consumer;
 
 @SuppressWarnings({"unused", "unchecked"})
@@ -13,16 +16,21 @@ public class ApiClient extends HttpConfigurable<ApiClient> {
 
     private final ApiRoutes routes;
 
+    private final ScheduledExecutorService ses;
     private final Map<String, ApiHandler> handlers;
     private final ApiAuthentication authentication;
 
     public ApiClient(final Consumer<ApiRoutes> setup) {
         super();
         this.routes = new ApiRoutes();
+        this.ses = Executors.newScheduledThreadPool(2, new DaemonThreadFactory());
         this.authentication = new ApiAuthentication();
         this.handlers = new HashMap<>();
-
         setup.accept(this.routes);
+    }
+
+    public ScheduledExecutorService executor() {
+        return this.ses;
     }
 
     public ApiClient register(final String protocol, final ApiHandler handler) {
