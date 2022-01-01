@@ -1,8 +1,9 @@
-package gh.giceratops.api.client.protocols.http;
+package gh.giceratops.api.client.core.http;
 
 import gh.giceratops.api.client.ApiMethod;
 import gh.giceratops.api.client.ApiResponse;
 
+import javax.ws.rs.core.Response.Status;
 import java.net.URI;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -36,15 +37,12 @@ public record HttpResponse<O>(HttpRequest<?, O> request,
         return list;
     }
 
-    public boolean isSuccess() {
-        return this.httpResponse.statusCode() >= 200
-                && this.httpResponse.statusCode() < 300;
+    @Override
+    public Status status() {
+        return Status.fromStatusCode(this.httpResponse.statusCode());
     }
 
-    public int statusCode() {
-        return this.httpResponse.statusCode();
-    }
-
+    @Override
     public O body() {
         return this.httpResponse.body();
     }

@@ -1,44 +1,47 @@
 package gh.giceratops.api.client.$;
 
 import gh.giceratops.api.client.ApiClient;
-import gh.giceratops.api.client.ApiEndpoint;
-import gh.giceratops.api.client.protocols.file.FileHandler;
-import gh.giceratops.api.client.protocols.http.HttpHandler;
-import gh.giceratops.api.client.protocols.http.HttpRequest;
+import gh.giceratops.api.client.ApiResponse;
+import gh.giceratops.api.client.ApiURL;
+import gh.giceratops.api.client.core.http.HttpHandler;
+import gh.giceratops.api.client.core.http.HttpRequest;
 
 import java.net.URI;
 
 public class Main {
 
     public static void main(final String... args) throws Throwable {
-        System.out.printf("Hello%n");
-
-
-        final var url1 = new URI("file://../test.txt");
-        System.out.printf("%s %s %s %n", url1.toURL().getProtocol(), url1.toURL().getFile(), url1.getAuthority());
-
-
-        final var fileHandler = new FileHandler();
-        final var httpHandler = new HttpHandler();
         final var client = new ApiClient((routes) -> routes
-                .get(Object.class, new ApiEndpoint("https://whoami.syrup.ms"))
-        )
-                .register("file", fileHandler)
-                .register("http", httpHandler)
-                .register("https", httpHandler);
-
-        final var req = client.get(Object.class);
-
-
-        System.out.println(
-                ((HttpRequest<Object, Object>) req)
-                        .reqHeader("X-Custom-Header1", "1") // Buggy
-                        .as(String.class)
-                        .reqHeader("X-Custom-Header2", "2")
-                        .sync()
-                        .get()
-                        .body()
+                .get(Object.class, new ApiURL("https://{service}.{server}.ms"))
+                .get(String.class, new ApiURL("file://test.json"))
         );
+        System.out.println(client.routes());
+
+        ((HttpHandler) client.handler("https"))
+                .auth()
+                .register((URI uri, java.net.http.HttpRequest.Builder builder) -> builder.header("X-Auth", "Auth"));
+
+
+        ((HttpRequest<?, ?>) client.get(Object.class))
+                .out(String.class)
+                .reqHeader("X-Custom-Header1", "1") // Buggy
+                .reqHeader("X-Custom-Header2", "2")
+                .urlParam("service", "whoami")
+                .urlParam("server", "syrup")
+                .queryParam("q", "search")
+                .queryParam("filter", "1")
+                .queryParam("filter", "2")
+                .async()
+                .thenApply(ApiResponse::body)
+                .thenAccept(System.out::println)
+                .join();
+
+        client.get(String.class)
+                .out(TestJson.class)
+                .sync()
+                .thenApply(ApiResponse::body)
+                .thenAccept(System.out::println)
+                .join();
 
         // ApiClient.register(protocol, ApiProtocolHandler);
         // ApiClient.routes().register(Object, ApiEndpoint);
@@ -54,5 +57,8 @@ public class Main {
          *          - .status()       // int (cfr. http status code)
          *          - .millis()
          */
+    }
+
+    public record TestJson(String name) {
     }
 }

@@ -1,4 +1,4 @@
-package gh.giceratops.api.client.auth;
+package gh.giceratops.api.client.core.http.auth;
 
 import java.net.URI;
 import java.util.LinkedList;
@@ -6,26 +6,26 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class ApiAuthentication {
+public class HttpAuthentication {
 
-    private final List<ApiAuthenticator> authenticators;
+    private final List<HttpAuthenticator> authenticators;
 
-    public ApiAuthentication() {
+    public HttpAuthentication() {
         this.authenticators = new LinkedList<>();
     }
 
-    public void register(final ApiAuthenticator authenticator) {
+    public void register(final HttpAuthenticator authenticator) {
         this.authenticators.add(authenticator);
     }
 
-    public Optional<ApiAuthenticator> find(final URI uri) {
+    public Optional<HttpAuthenticator> find(final URI uri) {
         return this.authenticators
                 .stream()
                 .filter((authenticator) -> authenticator.accepts(uri))
                 .findFirst();
     }
 
-    public void ifPresent(final URI uri, final Consumer<ApiAuthenticator> consumer) {
+    public void ifPresent(final URI uri, final Consumer<HttpAuthenticator> consumer) {
         this.find(uri).ifPresent(consumer);
     }
 }

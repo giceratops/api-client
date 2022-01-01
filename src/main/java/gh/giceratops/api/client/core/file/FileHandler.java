@@ -1,6 +1,6 @@
-package gh.giceratops.api.client.protocols.file;
+package gh.giceratops.api.client.core.file;
 
-import gh.giceratops.api.client.ApiClient;
+import gh.giceratops.api.client.ApiURL;
 import gh.giceratops.api.client.ApiHandler;
 import gh.giceratops.api.client.ApiMethod;
 import gh.giceratops.jutil.concurrent.DaemonThreadFactory;
@@ -21,7 +21,7 @@ public class FileHandler implements ApiHandler {
     }
 
     @Override
-    public <I, O> FileRequest<I, O> createRequest(ApiClient client, ApiMethod method, I in, Class<O> outClass) {
-        return null;
+    public <I, O> FileRequest<I, O> createRequest(final ApiMethod method, final ApiURL endpoint, final I in, final Class<O> outClass) {
+        return new FileRequest<I, O>(this, method, endpoint, in, outClass);
     }
 }

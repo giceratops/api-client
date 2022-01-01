@@ -16,14 +16,14 @@ class ApiRoutesTest {
     }
 
     private ApiRoutes router;
-    private ApiEndpoint endpoint;
+    private ApiURL endpoint;
 
     private ApiRoutesTest() {
     }
 
     @BeforeEach
     void beforeEach() {
-        this.endpoint = new ApiEndpoint("");
+        this.endpoint = new ApiURL("https://test.test");
         this.router = new ApiRoutes()
                 .get(ClassA.class, endpoint)
                 .post(ClassA.class, endpoint)

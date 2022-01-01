@@ -10,18 +10,18 @@ import java.util.Optional;
 
 public class ApiRoutes {
 
-    private final Map<Pair<ApiMethod, Class<?>>, ApiEndpoint> routes;
+    private final Map<Pair<ApiMethod, Class<?>>, ApiURL> routes;
 
     ApiRoutes() {
         this.routes = new HashMap<>();
     }
 
-    ApiRoutes add(final ApiMethod method, final Class<?> clazz, final ApiEndpoint endpoint) {
+    ApiRoutes add(final ApiMethod method, final Class<?> clazz, final ApiURL endpoint) {
         this.routes.put(Pair.nonNull(method, clazz), Objects.requireNonNull(endpoint));
         return this;
     }
 
-    public Optional<ApiEndpoint> endpoint(final ApiMethod method, final Class<?> clazz) {
+    public Optional<ApiURL> endpoint(final ApiMethod method, final Class<?> clazz) {
         return this.routes.entrySet()
                 .stream()
                 .filter(e -> e.getKey().equals(method, clazz))
@@ -29,25 +29,25 @@ public class ApiRoutes {
                 .map(Map.Entry::getValue);
     }
 
-    public ApiRoutes get(final Class<?> clazz, final ApiEndpoint endpoint) {
+    public ApiRoutes get(final Class<?> clazz, final ApiURL endpoint) {
         return this.add(ApiMethod.GET, clazz, endpoint);
     }
 
-    public ApiRoutes post(final Class<?> clazz, final ApiEndpoint endpoint) {
+    public ApiRoutes post(final Class<?> clazz, final ApiURL endpoint) {
         return this.add(ApiMethod.POST, clazz, endpoint);
     }
 
-    public ApiRoutes put(final Class<?> clazz, final ApiEndpoint endpoint) {
+    public ApiRoutes put(final Class<?> clazz, final ApiURL endpoint) {
         return this.add(ApiMethod.PUT, clazz, endpoint);
     }
 
-    public ApiRoutes delete(final Class<?> clazz, final ApiEndpoint endpoint) {
+    public ApiRoutes delete(final Class<?> clazz, final ApiURL endpoint) {
         return this.add(ApiMethod.DELETE, clazz, endpoint);
     }
 
     @Override
     public String toString() {
-        final var sb = new StringBuilder("ApiRoutes (").append(this.routes.size()).append(")\r\n");
+        final var sb = new StringBuilder("ApiRoutes (").append(this.routes.size()).append(")").append(System.lineSeparator());
         this.routes.forEach((key, value) -> sb
                 .append("\t- ")
                 .append(Strings.padStart(key.left().name(), 6, ' '))
@@ -55,7 +55,7 @@ public class ApiRoutes {
                 .append(Strings.padEnd(key.right().getName(), 30, ' '))
                 .append(" @ ")
                 .append(value.url())
-                .append("\r\n")
+                .append(System.lineSeparator())
         );
         return sb.toString();
     }

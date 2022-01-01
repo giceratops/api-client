@@ -1,4 +1,4 @@
-package gh.giceratops.api.client.protocols.http;
+package gh.giceratops.api.client.core.http;
 
 import gh.giceratops.api.client.ApiClient;
 import gh.giceratops.jutil.Maps;

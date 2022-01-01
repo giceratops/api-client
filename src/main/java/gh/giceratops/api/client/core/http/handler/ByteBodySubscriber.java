@@ -1,4 +1,4 @@
-package gh.giceratops.api.client.protocols.http.handler;
+package gh.giceratops.api.client.core.http.handler;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

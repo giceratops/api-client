@@ -4,13 +4,15 @@ import java.util.concurrent.CompletableFuture;
 
 public interface ApiRequest<I, O> {
 
-    <C> ApiRequest<I, C> as(final Class<C> cClass);
+   <C> ApiRequest<I, C> out(final Class<C> cClass);
 
-    ApiMethod method();
+   ApiURL url();
 
-    ApiRequest<I, O> urlParam(final String param, final Object o);
+   ApiMethod method();
 
-    CompletableFuture<? extends ApiResponse<O>> async();
+   ApiRequest<I, O> urlParam(final String param, final Object o);
 
-    CompletableFuture<? extends ApiResponse<O>> sync();
+   CompletableFuture<? extends ApiResponse<O>> async();
+
+   CompletableFuture<? extends ApiResponse<O>> sync();
 }
