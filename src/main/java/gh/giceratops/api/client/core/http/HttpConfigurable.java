@@ -84,6 +84,7 @@ public class HttpConfigurable<I extends HttpConfigurable<I>> implements Function
         return (I) this;
     }
 
+    @Override
     public String apply(String url) {
         if (!Maps.isEmpty(this.urlParams)) {
             url = Strings.format(url, this.urlParams);

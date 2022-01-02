@@ -10,7 +10,7 @@ public interface ApiRequest<I, O> {
 
    ApiMethod method();
 
-   ApiRequest<I, O> urlParam(final String param, final Object o);
+   ApiRequest<I, O> urlParam(final String param, final Object value);
 
    CompletableFuture<? extends ApiResponse<O>> async();
 

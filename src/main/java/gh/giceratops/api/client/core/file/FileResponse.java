@@ -3,20 +3,23 @@ package gh.giceratops.api.client.core.file;
 import gh.giceratops.api.client.ApiResponse;
 
 import javax.ws.rs.core.Response.Status;
+import java.io.FileReader;
 
 public class FileResponse<O> implements ApiResponse<O> {
 
+    private final FileRequest<?, O> request;
     private final Status status;
     private final O body;
 
-    public FileResponse(final Status status, final O body) {
+    public FileResponse(final FileRequest<?, O> request, final Status status, final O body) {
+        this.request = request;
         this.status = status;
         this.body = body;
     }
 
     @Override
     public FileRequest<?, O> request() {
-        return null;
+        return this.request;
     }
 
     @Override

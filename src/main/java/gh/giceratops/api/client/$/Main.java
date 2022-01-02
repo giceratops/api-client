@@ -13,7 +13,7 @@ public class Main {
     public static void main(final String... args) throws Throwable {
         final var client = new ApiClient((routes) -> routes
                 .get(Object.class, new ApiURL("https://{service}.{server}.ms"))
-                .get(String.class, new ApiURL("file://test.json"))
+                .get(String.class, new ApiURL("file://{file}.json"))
         );
         System.out.println(client.routes());
 
@@ -34,13 +34,22 @@ public class Main {
                 .async()
                 .thenApply(ApiResponse::body)
                 .thenAccept(System.out::println)
+                .exceptionally((t) -> {
+                    t.printStackTrace(System.err);
+                    return null;
+                })
                 .join();
 
         client.get(String.class)
                 .out(TestJson.class)
-                .sync()
+                .urlParam("file", "test2")
+                .async()
                 .thenApply(ApiResponse::body)
                 .thenAccept(System.out::println)
+                .exceptionally((t) -> {
+                    t.printStackTrace(System.err);
+                    return null;
+                })
                 .join();
 
         // ApiClient.register(protocol, ApiProtocolHandler);
@@ -59,6 +68,6 @@ public class Main {
          */
     }
 
-    public record TestJson(String name) {
+    public record TestJson(int id, String name) {
     }
 }

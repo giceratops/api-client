@@ -51,8 +51,6 @@ public class HttpRequest<I, O> extends HttpConfigurable<HttpRequest<I, O>> imple
     private java.net.http.HttpRequest createRequest(final ApiURL endpoint) {
         final var builder = java.net.http.HttpRequest.newBuilder();
 
-        System.out.println(endpoint.url());
-        System.out.println(this.apply(endpoint.url()));
         final var uri = URI.create(this.apply(endpoint.url()));
 
         final java.net.http.HttpRequest.BodyPublisher publisher;
