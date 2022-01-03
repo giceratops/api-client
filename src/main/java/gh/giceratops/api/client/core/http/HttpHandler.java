@@ -1,11 +1,13 @@
 package gh.giceratops.api.client.core.http;
 
-import gh.giceratops.api.client.ApiURL;
+import gh.giceratops.api.client.ApiClient;
 import gh.giceratops.api.client.ApiHandler;
 import gh.giceratops.api.client.ApiMethod;
+import gh.giceratops.api.client.ApiURL;
 import gh.giceratops.api.client.core.http.auth.HttpAuthentication;
 import gh.giceratops.jutil.concurrent.DaemonThreadFactory;
 
+import javax.ws.rs.core.HttpHeaders;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.http.HttpClient;
@@ -28,8 +30,6 @@ public class HttpHandler implements ApiHandler {
                 .followRedirects(HttpClient.Redirect.NORMAL)
                 .executor(Executors.newScheduledThreadPool(2, new DaemonThreadFactory()))
                 .build();
-
-        // super.reqHeader(HttpHeaders.USER_AGENT, ApiClient.class.getSimpleName());
     }
 
     public HttpAuthentication auth() {
@@ -40,8 +40,13 @@ public class HttpHandler implements ApiHandler {
         return this.http;
     }
 
+    public CookieManager cookies() {
+        return this.cookieManager;
+    }
+
     @Override
     public <I, O> HttpRequest<I, O> createRequest(final ApiMethod method, final ApiURL endpoint, final I in, final Class<O> outClass) {
-        return new HttpRequest<>(this, method, endpoint, in, outClass);
+        return new HttpRequest<>(this, method, endpoint, in, outClass)
+                .reqHeader(HttpHeaders.USER_AGENT, ApiClient.class.getSimpleName());
     }
 }

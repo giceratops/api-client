@@ -22,6 +22,6 @@ public class FileHandler implements ApiHandler {
 
     @Override
     public <I, O> FileRequest<I, O> createRequest(final ApiMethod method, final ApiURL endpoint, final I in, final Class<O> outClass) {
-        return new FileRequest<I, O>(this, method, endpoint, in, outClass);
+        return new FileRequest<>(this, method, endpoint, in, outClass);
     }
 }
