@@ -67,6 +67,14 @@ public class ApiClient {
         return this.handlers.get(protocol);
     }
 
+    public ApiHandler handler(final Class<?> hClass) {
+        return this.handlers.values()
+                .stream()
+                .filter((handler) -> handler.getClass().isAssignableFrom(hClass))
+                .findFirst()
+                .orElseThrow();
+    }
+
     private <I, O> ApiRequest<I, O> request(final ApiMethod method, final I in, final Class<O> outClass) {
         final Class<?> aClass;
         if (in == null) {
