@@ -19,7 +19,7 @@
         <project.scm.id>github</project.scm.id>
 
         <!-- versions -->
-        <jutil.version>0.0.0-SNAPSHOT</jutil.version>
+        <jutil.version>0.0.1-SNAPSHOT</jutil.version>
         <ws.rs.version>2.1.1</ws.rs.version>
 
         <slf4j.version>1.7.32</slf4j.version>
