@@ -22,7 +22,7 @@
         <jutil.version>0.0.2-SNAPSHOT</jutil.version>
         <ws.rs.version>2.1.1</ws.rs.version>
 
-        <slf4j.version>1.7.32</slf4j.version>
+        <slf4j.version>1.7.33</slf4j.version>
         <junit.jupiter.version>5.8.2</junit.jupiter.version>
         <junit.platform.version>1.8.2</junit.platform.version>
     </properties>

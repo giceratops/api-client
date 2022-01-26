@@ -1,4 +1,4 @@
-package gh.giceratops.api.client.core.http.auth;
+package gh.giceratops.api.client.handler.http.auth;
 
 import java.net.URI;
 import java.net.http.HttpRequest;

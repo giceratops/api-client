@@ -1,9 +1,9 @@
-package gh.giceratops.api.client.core.http;
+package gh.giceratops.api.client.handler.http;
 
 import gh.giceratops.api.client.ApiMethod;
 import gh.giceratops.api.client.ApiRequest;
 import gh.giceratops.api.client.ApiURL;
-import gh.giceratops.api.client.core.http.handler.JsonBodyHandler;
+import gh.giceratops.api.client.handler.http.handler.JsonBodyHandler;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;

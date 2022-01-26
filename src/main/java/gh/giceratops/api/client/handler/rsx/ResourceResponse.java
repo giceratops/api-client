@@ -1,24 +1,23 @@
-package gh.giceratops.api.client.core.file;
+package gh.giceratops.api.client.handler.rsx;
 
 import gh.giceratops.api.client.ApiResponse;
 
 import javax.ws.rs.core.Response.Status;
-import java.io.FileReader;
 
-public class FileResponse<O> implements ApiResponse<O> {
+public class ResourceResponse<O> implements ApiResponse<O> {
 
-    private final FileRequest<?, O> request;
+    private final ResourceRequest<?, O> request;
     private final Status status;
     private final O body;
 
-    public FileResponse(final FileRequest<?, O> request, final Status status, final O body) {
+    public ResourceResponse(final ResourceRequest<?, O> request, final Status status, final O body) {
         this.request = request;
         this.status = status;
         this.body = body;
     }
 
     @Override
-    public FileRequest<?, O> request() {
+    public ResourceRequest<?, O> request() {
         return this.request;
     }
 

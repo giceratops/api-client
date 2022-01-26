@@ -1,7 +1,8 @@
 package gh.giceratops.api.client;
 
-import gh.giceratops.api.client.core.file.FileHandler;
-import gh.giceratops.api.client.core.http.HttpHandler;
+import gh.giceratops.api.client.handler.file.FileHandler;
+import gh.giceratops.api.client.handler.http.HttpHandler;
+import gh.giceratops.api.client.handler.rsx.ResourceHandler;
 import gh.giceratops.jutil.Reflect;
 import gh.giceratops.jutil.concurrent.DaemonThreadFactory;
 import org.jetbrains.annotations.NotNull;
@@ -10,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Consumer;
@@ -21,6 +23,10 @@ public class ApiClient {
     private final Map<String, ApiHandler> handlers;
     private final ApiRoutes routes;
 
+    public ApiClient() {
+        this((Consumer<ApiRoutes>) null);
+    }
+
     public ApiClient(@Nullable final Consumer<ApiRoutes> setup) {
         this(Executors.newScheduledThreadPool(2, new DaemonThreadFactory()), setup);
     }
@@ -30,13 +36,27 @@ public class ApiClient {
         this.handlers = new HashMap<>();
         this.routes = new ApiRoutes();
 
-        // default handlers
-        this.register(new String[]{"http", "https"}, new HttpHandler());
-        this.register("file", new FileHandler());
-
+        this.defaultHandlers();
         if (setup != null) {
             setup.accept(this.routes);
         }
+    }
+
+    private ApiClient(@NotNull final ApiClient other) {
+        this.executor = other.executor;
+        this.routes = other.routes;
+        this.handlers = new HashMap<>();
+        this.defaultHandlers();
+    }
+
+    private void defaultHandlers() {
+        this.register("file", new FileHandler())
+                .register("rsx", new ResourceHandler())
+                .register(new String[]{"http", "https"}, new HttpHandler());
+    }
+
+    public ApiClient copy() {
+        return new ApiClient(this);
     }
 
     public ScheduledExecutorService executor() {
@@ -67,12 +87,12 @@ public class ApiClient {
         return this.handlers.get(protocol);
     }
 
-    public ApiHandler handler(final Class<?> hClass) {
+    public <H extends ApiHandler> Optional<H> handler(final Class<H> hClass) {
         return this.handlers.values()
                 .stream()
                 .filter((handler) -> handler.getClass().isAssignableFrom(hClass))
-                .findFirst()
-                .orElseThrow();
+                .map((handler) -> (H) handler)
+                .findFirst();
     }
 
     private <I, O> ApiRequest<I, O> request(final ApiMethod method, final I in, final Class<O> outClass) {

@@ -1,4 +1,4 @@
-package gh.giceratops.api.client.core.http;
+package gh.giceratops.api.client.handler.http;
 
 import gh.giceratops.api.client.ApiMethod;
 import gh.giceratops.api.client.ApiResponse;
