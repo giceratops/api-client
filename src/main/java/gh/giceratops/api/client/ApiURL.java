@@ -20,7 +20,7 @@ public class ApiURL {
     }
 
     public String path() {
-        return this.url.getHost();
+        return this.url.getPath();
     }
 
     public String protocol() {
@@ -29,6 +29,6 @@ public class ApiURL {
 
     @Override
     public String toString() {
-        return String.format("ApiEndpoint[url=%s, protocol=%s]", this.url, this.protocol());
+        return String.format("ApiURL[url=%s, protocol=%s, path=%s]", this.url, this.protocol(), this.path());
     }
 }

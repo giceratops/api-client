@@ -1,4 +1,4 @@
-package gh.giceratops.api.client.core.http.auth;
+package gh.giceratops.api.client.handler.http.auth;
 
 import java.net.URI;
 import java.util.LinkedList;
@@ -22,6 +22,14 @@ public class HttpAuthentication {
         return this.authenticators
                 .stream()
                 .filter((authenticator) -> authenticator.accepts(uri))
+                .findFirst();
+    }
+
+    public <A extends HttpAuthenticator> Optional<A> find(final Class<A> aClass) {
+        return this.authenticators
+                .stream()
+                .filter((authenticator) -> authenticator.getClass().isAssignableFrom(aClass))
+                .map((authenticator) -> (A) authenticator)
                 .findFirst();
     }
 

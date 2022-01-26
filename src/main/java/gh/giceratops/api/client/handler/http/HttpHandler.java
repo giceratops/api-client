@@ -1,10 +1,10 @@
-package gh.giceratops.api.client.core.http;
+package gh.giceratops.api.client.handler.http;
 
 import gh.giceratops.api.client.ApiClient;
 import gh.giceratops.api.client.ApiHandler;
 import gh.giceratops.api.client.ApiMethod;
 import gh.giceratops.api.client.ApiURL;
-import gh.giceratops.api.client.core.http.auth.HttpAuthentication;
+import gh.giceratops.api.client.handler.http.auth.HttpAuthentication;
 import gh.giceratops.jutil.concurrent.DaemonThreadFactory;
 
 import javax.ws.rs.core.HttpHeaders;
