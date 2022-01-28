@@ -36,7 +36,7 @@ public class Keycloak {
             data.put("client_id", "game");
             data.put("grant_type", this.grantType);
             data.put(this.grantType, this.password);
-            data.put("client_secret", "9d8389b3-ee3f-47e5-bc8f-1ee58935c733");
+            data.put("client_secret", "5aVTR7lr4mbgXHBUEHiG7Kl33gvoToAv");
             return data;
         }
 
