@@ -96,7 +96,6 @@ public class ResourceRequest<I, O> implements ApiRequest<I, O> {
             path = Strings.format(path, this.urlParams);
         }
 
-        System.out.printf("reading endpoint=%s path=%s%n", this.endpoint , this.endpoint.path());
         try (final var is = this.outClass.getResourceAsStream(path)) {
             final var obj = this.method.json().asObject(is, (Class<O>) this.outClass);
             return new ResourceResponse<>(this, Response.Status.OK, obj);
