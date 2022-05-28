@@ -17,6 +17,9 @@ import java.util.concurrent.TimeUnit;
 
 public class Keycloak {
 
+    public static String CLIENT_ID;
+    public static String CLIENT_SECRET;
+
     public record Token(String grantType, String username, String password) implements HttpFormData {
 
         static Token refresh(String username, String refreshToken) {
@@ -33,10 +36,10 @@ public class Keycloak {
             if (grantType.equals("password")) {
                 data.put("username", this.username);
             }
-            data.put("client_id", "game");
             data.put("grant_type", this.grantType);
             data.put(this.grantType, this.password);
-            data.put("client_secret", "9d8389b3-ee3f-47e5-bc8f-1ee58935c733");
+            data.put("client_id", CLIENT_ID);
+            data.put("client_secret", CLIENT_SECRET);
             return data;
         }
 
