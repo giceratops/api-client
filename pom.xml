@@ -6,10 +6,10 @@
 
     <groupId>gh.giceratops</groupId>
     <artifactId>api-client</artifactId>
-    <version>0.1.3-SNAPSHOT</version>
+    <version>1.0.0</version>
 
     <properties>
-        <java.version>17</java.version>
+        <java.version>18</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- mvn -->
@@ -19,7 +19,7 @@
         <project.scm.id>github</project.scm.id>
 
         <!-- versions -->
-        <jutil.version>0.0.2-SNAPSHOT</jutil.version>
+        <jutil.version>1.0.0</jutil.version>
         <ws.rs.version>2.1.1</ws.rs.version>
 
         <slf4j.version>1.7.36</slf4j.version>
