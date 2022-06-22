@@ -71,7 +71,9 @@ public class HttpRequest<I, O> extends HttpConfigurable<HttpRequest<I, O>> imple
                 .uri(uri)
                 .headers(super.headers());
 
-        this.handler.auth().ifPresent(uri, (authenticator) -> authenticator.handleRequest(uri, builder));
+        this.handler.auth().ifPresent(uri, (authenticator) ->
+                authenticator.handleRequest(uri, builder)
+        );
 
         this.createdAt = System.currentTimeMillis();
         return builder.build();

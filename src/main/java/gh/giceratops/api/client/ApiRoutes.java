@@ -47,7 +47,12 @@ public class ApiRoutes {
 
     @Override
     public String toString() {
-        final var sb = new StringBuilder("ApiRoutes (").append(this.routes.size()).append(")").append(System.lineSeparator());
+        final var sb = new StringBuilder()
+                .append("ApiRoutes (")
+                .append(this.routes.size())
+                .append(")")
+                .append(System.lineSeparator());
+
         this.routes.forEach((key, value) -> sb
                 .append("\t- ")
                 .append(Strings.padStart(key.left().name(), 6, ' '))

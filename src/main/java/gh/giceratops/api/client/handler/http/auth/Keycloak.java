@@ -1,5 +1,7 @@
 package gh.giceratops.api.client.handler.http.auth;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import gh.giceratops.api.client.ApiClient;
 import gh.giceratops.api.client.ApiURL;
 import gh.giceratops.api.client.handler.http.HttpFormData;
@@ -69,6 +71,7 @@ public class Keycloak {
         private String username;
         private String accessToken, refreshToken;
         private LocalDateTime accessTokenExpiresAt, refreshTokenExpiresAt;
+        private DecodedJWT decodedJWT;
         private ScheduledFuture<?> future;
 
         public Authenticator(final ApiClient client) {
@@ -98,6 +101,12 @@ public class Keycloak {
             this.fetchTokensIfNecessary(uri);
             if (this.accessToken != null) {
                 builder.header(HttpHeaders.AUTHORIZATION, "Bearer " + this.accessToken);
+
+                if (uri.toString().contains("USER_ID")) {
+                    builder.uri(URI.create(
+                            uri.toString().replace("USER_ID", this.decodedJWT.getSubject())
+                    ));
+                }
             }
         }
 
@@ -125,6 +134,7 @@ public class Keycloak {
                 this.refreshToken = authResp.refresh_token;
                 this.accessTokenExpiresAt = LocalDateTime.now().plusSeconds(authResp.expires_in);
                 this.refreshTokenExpiresAt = LocalDateTime.now().plusSeconds(authResp.refresh_expires_in);
+                this.decodedJWT = JWT.decode(this.accessToken);
 
                 this.scheduleRefresh(authResp.refresh_expires_in);
             } catch (final Exception e) {

@@ -51,8 +51,8 @@ public class ApiClient {
 
     private void defaultHandlers() {
         this.register("file", new FileHandler())
-                .register("rsx", new ResourceHandler())
-                .register(new String[]{"http", "https"}, new HttpHandler());
+                .register(new String[]{"http", "https"}, new HttpHandler())
+                .register("rsx", new ResourceHandler());
     }
 
     public ApiClient copy() {
