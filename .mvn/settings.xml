@@ -16,7 +16,7 @@
                     <url>https://repo1.maven.org/maven2</url>
                 </repository>
                 <repository>
-                    <id>gh.giceratops</id>
+                    <id>giceratops</id>
                     <url>https://maven.pkg.github.com/giceratops/*</url>
                     <snapshots>
                         <enabled>true</enabled>
@@ -28,7 +28,7 @@
 
     <servers>
         <server>
-            <id>gh.giceratops</id>
+            <id>giceratops</id>
             <username>${env.USERNAME}</username>
             <password>${env.PASSWORD}</password>
         </server>
