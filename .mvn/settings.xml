@@ -17,7 +17,7 @@
                 </repository>
                 <repository>
                     <id>giceratops</id>
-                    <url>https://maven.pkg.github.com/giceratops/*</url>
+                    <url>https://maven.pkg.github.com/giceratops/</url>
                     <snapshots>
                         <enabled>true</enabled>
                     </snapshots>

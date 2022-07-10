@@ -10,19 +10,20 @@
 
     <properties>
         <java.version>17</java.version>
+        <project.url>github.com/giceratops/api-client</project.url>
+        <project.scm.id>github</project.scm.id>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- mvn -->
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
-        <project.scm.id>github</project.scm.id>
-
         <!-- versions -->
         <jutil.version>1.0.0</jutil.version>
         <ws.rs.version>2.1.1</ws.rs.version>
-        <jwt.version>3.10.3</jwt.version>
+        <jwt.version>3.19.2</jwt.version>
 
+        <!-- test versions -->
         <slf4j.version>1.7.36</slf4j.version>
         <junit.jupiter.version>5.8.2</junit.jupiter.version>
         <junit.platform.version>1.8.2</junit.platform.version>
@@ -106,13 +107,13 @@
 
     <distributionManagement>
         <repository>
-            <id>github</id>
-            <name>GitHub giceratops Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/giceratops/api-client</url>
+            <id>${project.scm.id}</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.${project.url}</url>
         </repository>
     </distributionManagement>
 
     <scm>
-        <developerConnection>scm:git:https://github.com/giceratops/api-client.git</developerConnection>
+        <developerConnection>scm:git:https://${project.url}.git</developerConnection>
     </scm>
 </project>
