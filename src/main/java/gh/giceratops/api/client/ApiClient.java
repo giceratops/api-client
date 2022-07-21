@@ -5,8 +5,7 @@ import gh.giceratops.api.client.handler.http.HttpHandler;
 import gh.giceratops.api.client.handler.rsx.ResourceHandler;
 import gh.giceratops.jutil.Reflect;
 import gh.giceratops.jutil.concurrent.DaemonThreadFactory;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import lombok.NonNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,11 +26,11 @@ public class ApiClient {
         this((Consumer<ApiRoutes>) null);
     }
 
-    public ApiClient(@Nullable final Consumer<ApiRoutes> setup) {
+    public ApiClient(final Consumer<ApiRoutes> setup) {
         this(Executors.newScheduledThreadPool(2, new DaemonThreadFactory()), setup);
     }
 
-    public ApiClient(@NotNull final ScheduledExecutorService executor, @Nullable final Consumer<ApiRoutes> setup) {
+    public ApiClient(@NonNull final ScheduledExecutorService executor, final Consumer<ApiRoutes> setup) {
         this.executor = Objects.requireNonNull(executor, "executor");
         this.handlers = new HashMap<>();
         this.routes = new ApiRoutes();
@@ -42,7 +41,7 @@ public class ApiClient {
         }
     }
 
-    private ApiClient(@NotNull final ApiClient other) {
+    private ApiClient(@NonNull final ApiClient other) {
         this.executor = other.executor;
         this.routes = other.routes;
         this.handlers = new HashMap<>();
@@ -67,14 +66,14 @@ public class ApiClient {
         return this.routes;
     }
 
-    public ApiClient register(@NotNull final String[] protocols, @Nullable final ApiHandler handler) {
+    public ApiClient register(@NonNull final String[] protocols, final ApiHandler handler) {
         for (final var protocol : protocols) {
             this.register(protocol, handler);
         }
         return this;
     }
 
-    public ApiClient register(@NotNull final String protocol, @Nullable final ApiHandler handler) {
+    public ApiClient register(@NonNull final String protocol, final ApiHandler handler) {
         if (handler == null) {
             this.handlers.remove(protocol);
         } else {

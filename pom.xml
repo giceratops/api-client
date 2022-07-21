@@ -19,7 +19,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
         <!-- versions -->
-        <jutil.version>1.0.0</jutil.version>
+        <jutil.version>1.0.0-SNAPSHOT</jutil.version>
         <ws.rs.version>2.1.1</ws.rs.version>
         <jwt.version>3.19.2</jwt.version>
 
