@@ -1,6 +1,7 @@
 package gh.giceratops.api.client;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 
 public class ApiURL {

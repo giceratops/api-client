@@ -7,6 +7,9 @@ import gh.giceratops.jutil.Reflect;
 import gh.giceratops.jutil.concurrent.DaemonThreadFactory;
 import lombok.NonNull;
 
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLStreamHandler;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -17,6 +20,27 @@ import java.util.function.Consumer;
 
 @SuppressWarnings({"unused", "unchecked"})
 public class ApiClient {
+
+    static {
+        URL.setURLStreamHandlerFactory((protocol) -> switch (protocol) {
+            case "rsx", "nats" -> new URLStreamHandler() {
+                @Override
+                protected URLConnection openConnection(URL url) {
+                    return new URLConnection(url) {
+                        @Override
+                        public void connect() {
+                        }
+                    };
+                }
+
+                @Override
+                protected String toExternalForm(URL u) {
+                    return u.getAuthority();
+                }
+            };
+            default -> null;
+        });
+    }
 
     private final ScheduledExecutorService executor;
     private final Map<String, ApiHandler> handlers;

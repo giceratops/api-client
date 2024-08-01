@@ -8,6 +8,7 @@ import gh.giceratops.api.client.handler.http.handler.JsonBodyHandler;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import java.net.URI;
+import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("unused")
@@ -69,6 +70,7 @@ public class HttpRequest<I, O> extends HttpConfigurable<HttpRequest<I, O>> imple
         builder.method(this.method.name(), publisher)
                 .header(HttpHeaders.CONTENT_TYPE, contentType)
                 .uri(uri)
+                .timeout(Duration.ofSeconds(10))
                 .headers(super.headers());
 
         this.handler.auth().ifPresent(uri, (authenticator) ->
