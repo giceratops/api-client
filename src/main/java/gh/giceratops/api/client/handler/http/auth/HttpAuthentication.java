@@ -29,8 +29,8 @@ public class HttpAuthentication {
         return this.authenticators
                 .stream()
                 .filter((authenticator) -> authenticator.getClass().isAssignableFrom(aClass))
-                .map((authenticator) -> (A) authenticator)
-                .findFirst();
+                .findFirst()
+                .map((authenticator) -> (A) authenticator);
     }
 
     public void ifPresent(final URI uri, final Consumer<HttpAuthenticator> consumer) {

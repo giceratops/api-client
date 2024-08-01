@@ -6,10 +6,10 @@
 
     <groupId>gh.giceratops</groupId>
     <artifactId>api-client</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0-SNAPSHOT</version>
 
     <properties>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
         <project.url>github.com/giceratops/api-client</project.url>
         <project.scm.id>github</project.scm.id>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -19,9 +19,10 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
         <!-- versions -->
-        <jutil.version>1.0.0-SNAPSHOT</jutil.version>
+        <jutil.version>1.1.0-SNAPSHOT</jutil.version>
         <ws.rs.version>2.1.1</ws.rs.version>
         <jwt.version>3.19.2</jwt.version>
+        <nats.version>2.19.1</nats.version>
 
         <!-- test versions -->
         <slf4j.version>1.7.36</slf4j.version>
@@ -46,6 +47,12 @@
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
             <version>${jwt.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.nats</groupId>
+            <artifactId>jnats</artifactId>
+            <version>${nats.version}</version>
         </dependency>
 
         <!-- test: junit -->
