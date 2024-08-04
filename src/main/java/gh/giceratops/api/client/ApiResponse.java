@@ -1,6 +1,5 @@
 package gh.giceratops.api.client;
 
-
 import javax.ws.rs.core.Response.Status;
 
 public interface ApiResponse<O> {
@@ -10,6 +9,10 @@ public interface ApiResponse<O> {
     Status status();
 
     O body();
+
+    default O result() {
+        return this.body();
+    }
 
     default boolean isSuccess() {
         return this.status().getFamily() == Status.Family.SUCCESSFUL;

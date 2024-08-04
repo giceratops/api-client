@@ -10,10 +10,7 @@ import lombok.NonNull;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Consumer;
@@ -133,7 +130,7 @@ public class ApiClient {
                 .map(ApiURL::protocol)
                 .map(this.handlers::get)
                 .map((handler) -> handler.createRequest(method, endpoint.get(), in, outClass))
-                .orElseThrow();
+                .orElseThrow(() -> new NoSuchElementException("No endpoint to " + method + " " + aClass.getName()));
     }
 
     public <O> ApiRequest<?, O> get(final Class<O> oClass) {

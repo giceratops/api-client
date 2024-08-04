@@ -23,6 +23,7 @@ public class FileRequest<I, O> implements ApiRequest<I, O> {
     private Class<?> outClass;
     private long createdAt, finishedAt;
     private Map<String, String> urlParams;
+    private Map<String, String> headerParams;
 
     public FileRequest(final FileHandler handler, final ApiMethod method, final ApiURL endpoint, final I in, final Class<O> outClass) {
         this.method = method;
@@ -56,6 +57,15 @@ public class FileRequest<I, O> implements ApiRequest<I, O> {
             this.urlParams = new HashMap<>();
         }
         this.urlParams.put(param, String.valueOf(o));
+        return this;
+    }
+
+    @Override
+    public FileRequest<I, O> headerParam(final String param, final Object o) {
+        if (this.headerParams == null) {
+            this.headerParams = new HashMap<>();
+        }
+        this.headerParams.put(param, String.valueOf(o));
         return this;
     }
 

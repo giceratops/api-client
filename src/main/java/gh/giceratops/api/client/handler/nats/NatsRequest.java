@@ -6,6 +6,8 @@ import gh.giceratops.api.client.ApiURL;
 import gh.giceratops.jutil.Maps;
 import gh.giceratops.jutil.Strings;
 import io.nats.client.Message;
+import io.nats.client.impl.Headers;
+import io.nats.client.impl.NatsMessage;
 
 import javax.ws.rs.core.Response;
 import java.time.Duration;
@@ -25,6 +27,7 @@ public class NatsRequest<I, O> implements ApiRequest<I, O> {
     private Class<?> outClass;
     private long createdAt, finishedAt;
     private Map<String, String> urlParams;
+    private Map<String, String> headerParams;
 
     public NatsRequest(final NatsHandler handler, final ApiMethod method, final ApiURL endpoint, final I in, final Class<O> outClass) {
         this.method = method;
@@ -61,6 +64,15 @@ public class NatsRequest<I, O> implements ApiRequest<I, O> {
         return this;
     }
 
+    @Override
+    public NatsRequest<I, O> headerParam(final String param, final Object o) {
+        if (this.headerParams == null) {
+            this.headerParams = new HashMap<>();
+        }
+        this.headerParams.put(param, String.valueOf(o));
+        return this;
+    }
+
     private String createTopic() {
         var topic = this.endpoint.url();
         if (!Maps.isEmpty(this.urlParams)) {
@@ -76,11 +88,23 @@ public class NatsRequest<I, O> implements ApiRequest<I, O> {
         return this.method().json().asBytes(this.in);
     }
 
+    private Message createMessage() {
+        final var headers = new Headers();
+        headers.add("method", this.method.name());
+        if (this.headerParams != null) {
+            this.headerParams.forEach(headers::add);
+        }
+        return NatsMessage.builder()
+                .subject(this.createTopic())
+                .headers(headers)
+                .data(this.createInput())
+                .build();
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public CompletableFuture<NatsResponse<O>> async() {
-        final var topic = createTopic();
-        return this.handler.nats().request(topic, this.createInput()).thenApply((msg) -> {
+        return this.handler.nats().request(this.createMessage()).thenApply((msg) -> {
             try {
                 final var obj = this.method.json().asObject(msg.getData(), (Class<O>) this.outClass);
                 msg.ack();
@@ -96,10 +120,9 @@ public class NatsRequest<I, O> implements ApiRequest<I, O> {
     @SuppressWarnings("unchecked")
     public CompletableFuture<NatsResponse<O>> sync() {
         Message msg = null;
-        final var topic = createTopic();
         final var future = new CompletableFuture<NatsResponse<O>>();
         try {
-            msg = this.handler.nats().request(topic, this.createInput(), Duration.ofSeconds(10));
+            msg = this.handler.nats().request(this.createMessage(), Duration.ofSeconds(10));
             final var obj = this.method.json().asObject(msg.getData(), (Class<O>) this.outClass);
             msg.ack();
             future.complete(new NatsResponse<>(this, Response.Status.OK, obj));

@@ -74,10 +74,10 @@ public class Keycloak {
         private DecodedJWT decodedJWT;
         private ScheduledFuture<?> future;
 
-        public Authenticator(final ApiClient client) {
+        public Authenticator(final ApiClient client, final String baseUrl) {
             this.client = client;
             this.client.routes()
-                    .post(Keycloak.Token.class, new ApiURL("https://sso.syrup.ms/auth/realms/{realm}/protocol/openid-connect/token"));
+                    .post(Keycloak.Token.class, new ApiURL(baseUrl + "/auth/realms/{realm}/protocol/openid-connect/token"));
         }
 
         public Authenticator login(final String username, final String password) {
@@ -88,7 +88,7 @@ public class Keycloak {
 
         @Override
         public boolean accepts(final URI uri) {
-            return uri.getHost().endsWith("syrup.ms") ||
+            return uri.getHost().endsWith("salty.ms") ||
                     uri.getHost().equals("localhost");
         }
 

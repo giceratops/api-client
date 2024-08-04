@@ -40,6 +40,12 @@ public class HttpRequest<I, O> extends HttpConfigurable<HttpRequest<I, O>> imple
         return this.method;
     }
 
+    @Override
+    public ApiRequest<I, O> headerParam(String param, Object value) {
+        super.reqHeader(param, value);
+        return this;
+    }
+
     public long ping() {
         return this.finishedAt - this.createdAt;
     }
